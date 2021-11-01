@@ -8,8 +8,7 @@ import os
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 
-
-@app.route('/api/fofocas', methods=['GET'])
+@app.route('/api/fofoca/getall', methods=['GET'])
 def getfofocas():
 	html_doc = requests.get('https://tvefamosos.uol.com.br/')
 	
@@ -17,7 +16,7 @@ def getfofocas():
     	
 
 	##    Blocos    ##
-	destaques = soup.find('section', class_='highlights-with-photo').find('div', class_='row')
+	destaques = []
 	padroes = soup.find_all('section', class_='highlights-headline')
 	ultimas = soup.find('section', class_='latest-news')
 	data = []
@@ -26,18 +25,18 @@ def getfofocas():
 
 	#print(ultimas)
 
-	for dataBox_destaques in destaques.find_all('div', class_='thumbnail-standard'):
-		imgdestaques = dataBox_destaques.find('img')
-		title = dataBox_destaques.find('span', class_='thumb-kicker')
-		content = dataBox_destaques.find('h3', class_='thumb-title').text
-		content = content.replace('\"', '')
+	# for dataBox_destaques in destaques.find_all('div', class_='thumbnail-standard'):
+	# 	imgdestaques = dataBox_destaques.find('img')
+	# 	title = dataBox_destaques.find('span', class_='thumb-kicker')
+	# 	content = dataBox_destaques.find('h3', class_='thumb-title').text
+	# 	content = content.replace('\"', '')
 
-		#tratamento-url-imagem
-		##urlimg = imgdestaques['src'].replace('jpgx', 'jpg')
-		urlimg = imgdestaques['data-src']
+	# 	#tratamento-url-imagem
+	# 	##urlimg = imgdestaques['src'].replace('jpgx', 'jpg')
+	# 	urlimg = imgdestaques['data-src']
 
-		data.append({'imagem' : urlimg, 'titulo' : title.text.strip(),'conteudo' : content.strip()})
-
+	# 	data.append({'imagem' : urlimg, 'titulo' : title.text.strip(),'conteudo' : content.strip()})
+	
 	for dataBox_padroes in padroes:
 		if dataBox_padroes.find('div', class_='section-title'):
 			padrao_titulo = dataBox_padroes.find('div', class_='section-title').find('span').text
@@ -49,7 +48,7 @@ def getfofocas():
 		textitens = []
 		conteudo = []
 		c = 0
-		for getcontent in dataBox_padroes.find_all('div', class_='thumbnail-standard'):
+		for getcontent in dataBox_padroes.find_all('div', class_='thumbnails-wrapper'):
 			imgpadroes = getcontent.find('img')
 			textpadroes = getcontent.find('a').find('h3').text.strip()
 
@@ -63,12 +62,12 @@ def getfofocas():
 		fofocas.append({'titulo' : padrao_titulo.strip(), 'conteudo' : conteudo})
 			
 
-	for dataBox_ultimas in ultimas.find_all('div', class_='thumbnail-standard'):
+	for dataBox_ultimas in ultimas.find_all('div', class_='thumbnails-wrapper'):
 		if dataBox_ultimas.find('h3', class_='thumb-title'):
 			imgultimas = dataBox_ultimas.find('img')
 			content = dataBox_ultimas.find('h3', class_='thumb-title').text
 			content = content.replace('\"', '')
-			data_ultimas = dataBox_ultimas.find('time', class_='thumb-time')
+			data_ultimas = dataBox_ultimas.find('time', class_='thumb-date')
 
 			if (hasattr(imgultimas, 'src')):
 				aux = imgultimas['data-src']
