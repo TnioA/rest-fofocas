@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask import Flask, jsonify
 from flask_restx import Resource, Api
+from flask_cors import CORS
 from bs4 import BeautifulSoup
 import requests
 import json
@@ -8,6 +9,7 @@ import os
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
+CORS(app)
 api = Api(app, version='1.0', title='Fofocas API', description='Serviço para retorno de notícias obtidas em diversos canais')
 
 helth_check = api.namespace('helthcheck', ordered=True)
